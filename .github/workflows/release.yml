@@ -6,6 +6,10 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -71,12 +75,11 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
-          release_name: VibeCoding Project Gallery ${{ steps.tag_name.outputs.TAG_NAME }}
+          name: VibeCoding Project Gallery ${{ steps.tag_name.outputs.TAG_NAME }}
           body: |
             ## VibeCoding Project Gallery ${{ steps.tag_name.outputs.TAG_NAME }}
 
@@ -103,17 +106,7 @@ jobs:
             如有问题或建议，请在 [Issues](https://github.com/${{ github.repository }}/issues) 中反馈。
           draft: false
           prerelease: false
-
-      - name: Upload Windows Release Assets
-        shell: pwsh
-        run: |
-          $files = Get-ChildItem -Path "./dist" -Filter "*.exe"
-          foreach ($file in $files) {
-            Write-Host "Uploading Windows exe: $($file.Name)"
-            $headers = @{
-              "Authorization" = "token ${{ secrets.GITHUB_TOKEN }}"
-              "Content-Type" = "application/octet-stream"
-            }
-            $uri = "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$($file.Name)"
-            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -InFile $file.FullName
-          }
+          files: |
+            dist/*.exe
+            dist/*.exe.blockmap
+            dist/latest.yml
