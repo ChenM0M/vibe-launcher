@@ -24,6 +24,11 @@ jobs:
         run: |
           npm ci
           cd frontend && npm ci
+          cd ..
+          
+      - name: Install Electron dependencies
+        run: |
+          npx electron-builder install-app-deps
 
       - name: Run tests (if available)
         run: |
@@ -36,7 +41,7 @@ jobs:
 
       - name: Test Electron packaging (dry run)
         run: |
-          npm run pack
+          npx electron-builder --dir
         env:
           NODE_ENV: production
           CSC_IDENTITY_AUTO_DISCOVERY: false
