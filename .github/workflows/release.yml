@@ -8,10 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -20,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -37,59 +34,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install native dependencies (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2-dev libxss1-dev libgbm-dev libasound2-dev
-
-      - name: Build Electron app (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Build Electron app (Windows only)
         run: |
           npm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
 
-      - name: Build Electron app (macOS)
-        if: matrix.os == 'macos-latest'
-        run: |
-          npm run dist
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Electron app (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          npm run dist
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload artifacts (Windows)
-        if: matrix.os == 'windows-latest'
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
             dist/*.exe
             dist/*.exe.blockmap
-
-      - name: Upload artifacts (macOS)
-        if: matrix.os == 'macos-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-build
-          path: |
-            dist/*.dmg
-            dist/*.dmg.blockmap
-
-      - name: Upload artifacts (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-build
-          path: |
-            dist/*.AppImage
-            dist/*.AppImage.blockmap
+            dist/latest.yml
 
   release:
     needs: build
@@ -148,47 +107,16 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Windows Release Asset
-        if: always()
+      - name: Upload Windows Release Assets
+        shell: pwsh
         run: |
-          for file in ./dist/*.exe; do
-            if [ -f "$file" ]; then
-              echo "Uploading Windows exe: $file"
-              curl \
-                -X POST \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Content-Type: application/octet-stream" \
-                --data-binary "@$file" \
-                "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
-            fi
-          done
-
-      - name: Upload macOS Release Asset
-        if: always()
-        run: |
-          for file in ./dist/*.dmg; do
-            if [ -f "$file" ]; then
-              echo "Uploading macOS dmg: $file"
-              curl \
-                -X POST \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Content-Type: application/octet-stream" \
-                --data-binary "@$file" \
-                "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
-            fi
-          done
-
-      - name: Upload Linux Release Asset
-        if: always()
-        run: |
-          for file in ./dist/*.AppImage; do
-            if [ -f "$file" ]; then
-              echo "Uploading Linux AppImage: $file"
-              curl \
-                -X POST \
-                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                -H "Content-Type: application/octet-stream" \
-                --data-binary "@$file" \
-                "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
-            fi
-          done
+          $files = Get-ChildItem -Path "./dist" -Filter "*.exe"
+          foreach ($file in $files) {
+            Write-Host "Uploading Windows exe: $($file.Name)"
+            $headers = @{
+              "Authorization" = "token ${{ secrets.GITHUB_TOKEN }}"
+              "Content-Type" = "application/octet-stream"
+            }
+            $uri = "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$($file.Name)"
+            Invoke-RestMethod -Uri $uri -Method Post -Headers $headers -InFile $file.FullName
+          }
