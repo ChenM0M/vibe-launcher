@@ -36,7 +36,7 @@ jobs:
 
       - name: Build Electron app (Windows only)
         run: |
-          npm run dist
+          npx electron-builder --win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: false

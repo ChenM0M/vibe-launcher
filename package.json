@@ -15,8 +15,8 @@
     "electron": "electron .",
     "electron-dev": "concurrently \"npm run backend\" \"npm run frontend\" \"wait-on http://localhost:3000 && electron .\"",
     "build-electron": "npm run build && electron-builder",
-    "dist": "npm run build && electron-builder --publish=never",
-    "pack": "electron-builder --dir",
+    "dist": "npm run build && npx electron-builder --win --publish=never",
+    "pack": "npx electron-builder --dir",
     "postinstall": "electron-builder install-app-deps",
     "release": "node scripts/release.js",
     "version-check": "node scripts/release.js --version"
