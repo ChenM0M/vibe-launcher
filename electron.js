@@ -13,9 +13,9 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
-    frame: false, // 隐藏默认标题栏，使用自定义标题栏
-    transparent: false,
-    backgroundColor: '#ffffff',
+    minWidth: 1000,
+    minHeight: 600,
+    backgroundColor: '#f5f5f5',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -23,7 +23,10 @@ function createWindow() {
     },
     icon: path.join(__dirname, 'frontend/public/favicon.ico'),
     title: 'VibeCoding Project Gallery',
-    show: false // 先不显示，等加载完成后再显示
+    show: false, // 先不显示，等加载完成后再显示
+    autoHideMenuBar: true, // 自动隐藏菜单栏，更简洁
+    titleBarStyle: 'default', // 使用系统默认标题栏
+    frame: true // 保留标题栏和窗口控制按钮
   });
 
   // 在开发环境中加载开发服务器
