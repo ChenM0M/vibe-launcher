@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Tag, Tooltip, Badge } from 'antd';
 import { PlayCircleOutlined, StopOutlined, FolderOpenOutlined, DeleteOutlined, EditOutlined, CodeOutlined, EnvironmentOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Project } from '../../services/api';
 import './ProjectCard.css';
 
