@@ -36,7 +36,7 @@ jobs:
 
       - name: Test Electron packaging (dry run)
         run: |
-          npx electron-builder --dir
+          npm run pack
         env:
           NODE_ENV: production
           CSC_IDENTITY_AUTO_DISCOVERY: false
