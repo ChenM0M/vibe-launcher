@@ -1,7 +1,9 @@
 const { app, BrowserWindow, Menu } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-const isDev = require('electron-is-dev');
+
+// 判断是否为开发环境（不依赖electron-is-dev）
+const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
 let mainWindow;
 let backendProcess;

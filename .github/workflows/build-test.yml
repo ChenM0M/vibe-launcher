@@ -39,9 +39,9 @@ jobs:
         run: |
           cd frontend && npm run build
 
-      - name: Test Electron packaging (dry run)
+      - name: Test Electron packaging (portable dry run)
         run: |
-          npx electron-builder --dir
+          npx electron-builder --win portable --dir
         env:
           NODE_ENV: production
           CSC_IDENTITY_AUTO_DISCOVERY: false
