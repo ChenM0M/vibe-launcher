@@ -86,17 +86,14 @@ jobs:
             - 强大的项目管理和启动工具
             - 支持多种开发工具和环境配置
             - 直观的用户界面和流畅的动画效果
-            - 跨平台支持 (Windows, macOS, Linux)
+            - Windows桌面应用，流畅稳定
 
             ### 📦 下载说明
-            - **Windows**: 下载 `.exe` 文件
-            - **macOS**: 下载 `.dmg` 文件
-            - **Linux**: 下载 `.AppImage` 文件
+            - **Windows 10/11**: 下载 `.exe` 安装包，双击安装即可
 
             ### 🔧 系统要求
-            - Windows 10 或更高版本
-            - macOS 10.13 或更高版本
-            - Ubuntu 18.04 或等效的 Linux 发行版
+            - Windows 10 或更高版本（推荐Windows 11）
+            - 至少 200MB 可用磁盘空间
 
             ### 📋 更新日志
             详细更新内容请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)

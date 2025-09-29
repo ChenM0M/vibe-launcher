@@ -25,7 +25,7 @@ function createWindow() {
   // 在生产环境中加载静态文件
   const startUrl = isDev 
     ? 'http://localhost:3000' 
-    : `file://${path.join(__dirname, '../frontend/build/index.html')}`;
+    : `file://${path.join(__dirname, 'frontend/build/index.html')}`;
   
   mainWindow.loadURL(startUrl);
 
