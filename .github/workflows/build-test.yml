@@ -41,7 +41,7 @@ jobs:
 
       - name: Test Electron packaging (portable dry run)
         run: |
-          npx electron-builder --win portable --dir
+          npx electron-builder@24.13.3 --win portable --dir
         env:
           NODE_ENV: production
           CSC_IDENTITY_AUTO_DISCOVERY: false
