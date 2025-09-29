@@ -14,10 +14,11 @@
     "install-all": "npm install && cd frontend && npm install",
     "electron": "electron .",
     "electron-dev": "concurrently \"npm run backend\" \"npm run frontend\" \"wait-on http://localhost:3000 && electron .\"",
-    "build-electron": "npm run build && electron-builder",
+    "build-electron": "npm run build && npx electron-builder",
     "dist": "npm run build && npx electron-builder --win --publish=never",
     "pack": "npx electron-builder --dir",
-    "postinstall": "npx electron-builder install-app-deps",
+    "postinstall": "echo 'Skipping electron postinstall on local dev'",
+    "postinstall:ci": "npx electron-builder install-app-deps",
     "release": "node scripts/release.js",
     "version-check": "node scripts/release.js --version"
   },
@@ -59,7 +60,7 @@
       "createStartMenuShortcut": true
     },
     "win": {
-      "target": "portable"
+      "target": "nsis"
     },
     "files": [
       "electron.js",

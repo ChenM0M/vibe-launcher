@@ -28,7 +28,7 @@ jobs:
           
       - name: Install Electron dependencies
         run: |
-          npx electron-builder install-app-deps
+          npm run postinstall:ci
 
       - name: Run tests (if available)
         run: |

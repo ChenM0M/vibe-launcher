@@ -28,12 +28,15 @@ jobs:
           
       - name: Install Electron dependencies
         run: |
-          npx electron-builder install-app-deps
+          npm run postinstall:ci
 
       - name: Build frontend
         run: |
           cd frontend && npm run build
 
+      - name: Setup MSBuild (Windows)
+        uses: microsoft/setup-msbuild@v1.3
+      
       - name: Setup Python (for node-gyp)
         uses: actions/setup-python@v4
         with:
