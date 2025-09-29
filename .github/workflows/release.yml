@@ -1,0 +1,194 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+
+      - name: Build frontend
+        run: |
+          cd frontend && npm run build
+
+      - name: Setup Python (for node-gyp)
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install native dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2-dev libxss1-dev libgbm-dev libasound2-dev
+
+      - name: Build Electron app (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Electron app (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Electron app (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: |
+            dist/*.exe
+            dist/*.exe.blockmap
+
+      - name: Upload artifacts (macOS)
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-build
+          path: |
+            dist/*.dmg
+            dist/*.dmg.blockmap
+
+      - name: Upload artifacts (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-build
+          path: |
+            dist/*.AppImage
+            dist/*.AppImage.blockmap
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: ./dist
+
+      - name: Get tag name
+        id: tag_name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag_name.outputs.TAG_NAME }}
+          release_name: VibeCoding Project Gallery ${{ steps.tag_name.outputs.TAG_NAME }}
+          body: |
+            ## VibeCoding Project Gallery ${{ steps.tag_name.outputs.TAG_NAME }}
+
+            🚀 **新版本发布！**
+
+            ### ✨ 主要特性
+            - 强大的项目管理和启动工具
+            - 支持多种开发工具和环境配置
+            - 直观的用户界面和流畅的动画效果
+            - 跨平台支持 (Windows, macOS, Linux)
+
+            ### 📦 下载说明
+            - **Windows**: 下载 `.exe` 文件
+            - **macOS**: 下载 `.dmg` 文件
+            - **Linux**: 下载 `.AppImage` 文件
+
+            ### 🔧 系统要求
+            - Windows 10 或更高版本
+            - macOS 10.13 或更高版本
+            - Ubuntu 18.04 或等效的 Linux 发行版
+
+            ### 📋 更新日志
+            详细更新内容请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
+
+            ---
+            
+            如有问题或建议，请在 [Issues](https://github.com/${{ github.repository }}/issues) 中反馈。
+          draft: false
+          prerelease: false
+
+      - name: Upload Windows Release Asset
+        if: always()
+        run: |
+          for file in ./dist/*.exe; do
+            if [ -f "$file" ]; then
+              echo "Uploading Windows exe: $file"
+              curl \
+                -X POST \
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Content-Type: application/octet-stream" \
+                --data-binary "@$file" \
+                "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
+            fi
+          done
+
+      - name: Upload macOS Release Asset
+        if: always()
+        run: |
+          for file in ./dist/*.dmg; do
+            if [ -f "$file" ]; then
+              echo "Uploading macOS dmg: $file"
+              curl \
+                -X POST \
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Content-Type: application/octet-stream" \
+                --data-binary "@$file" \
+                "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
+            fi
+          done
+
+      - name: Upload Linux Release Asset
+        if: always()
+        run: |
+          for file in ./dist/*.AppImage; do
+            if [ -f "$file" ]; then
+              echo "Uploading Linux AppImage: $file"
+              curl \
+                -X POST \
+                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                -H "Content-Type: application/octet-stream" \
+                --data-binary "@$file" \
+                "https://uploads.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}/assets?name=$(basename "$file")"
+            fi
+          done

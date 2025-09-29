@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-react-app:*)",
+      "Bash(npm install:*)",
+      "Read(//c/**)",
+      "Bash(dir:*)",
+      "Bash(cmd /c dir:*)",
+      "Bash(cmd /c:*)",
+      "Bash(powershell:*)",
+      "Bash(del \"C:\\Users\\11231\\Desktop\\LocalRepo\\VibeCodingProjectGallery\\frontend\\src\\i18n.ts\")",
+      "Bash(npm run dev:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(node:*)",
+      "Bash(del:*)",
+      "Bash(npm run build:*)",
+      "Bash(start.bat)",
+      "Bash(sqlite3:*)",
+      "Bash(npm start)",
+      "Bash(curl -s http://localhost:5000/api/projects)",
+      "Bash(curl -X POST http://localhost:5000/api/projects -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test Project\"\",\"\"description\"\":\"\"Test project for delete testing\"\",\"\"path\"\":\"\"C:\\\\test\"\"}\")",
+      "Bash(curl -X DELETE http://localhost:5000/api/projects/765a331c-ecef-4889-a1ba-aac7e2778bb0)",
+      "Bash(set PORT=3000)",
+      "Bash(curl -X POST http://localhost:5000/api/projects -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test Delete Project\"\",\"\"description\"\":\"\"用于测试删除功能的项目\"\",\"\"path\"\":\"\"C:\\\\test\\\\delete\"\"}\")",
+      "Bash(curl -X POST http://localhost:5000/api/projects -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test Delete Project\"\",\"\"description\"\":\"\"Test project for delete functionality\"\",\"\"path\"\":\"\"C:/test/delete\"\"}\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,172 @@
+.project-card {
+  height: 100%;
+  cursor: pointer;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  background: white;
+  will-change: transform;
+  transition: box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.project-card:hover::before {
+  opacity: 1;
+}
+
+.project-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border-color: rgba(102, 126, 234, 0.2);
+}
+
+.project-card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.project-name {
+  font-weight: 600;
+  font-size: 17px;
+  color: #1a1a2e;
+  letter-spacing: -0.3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-card-content {
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.project-description {
+  color: #666;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 44px;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.project-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  min-height: 24px;
+}
+
+.project-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.project-path {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.project-configs {
+  font-size: 12px;
+  color: #1890ff;
+}
+
+/* 操作按钮美化 */
+.project-card .ant-card-actions {
+  background: rgba(249, 250, 251, 0.8);
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.project-card .ant-card-actions > li {
+  margin: 0;
+}
+
+.project-card .ant-card-actions > li > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  transition: all 0.3s ease;
+  font-size: 18px;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 10;
+  position: relative;
+}
+
+.project-card .ant-card-actions > li > span:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+/* 确保删除按钮有特殊样式 */
+.project-card .ant-card-actions > li > span[aria-label*="delete"],
+.project-card .ant-card-actions > li > span:last-child {
+  color: #ff4d4f;
+}
+
+.project-card .ant-card-actions > li > span[aria-label*="delete"]:hover,
+.project-card .ant-card-actions > li > span:last-child:hover {
+  color: #ff7875;
+  background: rgba(255, 77, 79, 0.05);
+}
+
+/* 运行状态样式 */
+.project-running {
+  position: relative;
+}
+
+.project-running::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;
+  background: #52c41a;
+  border-radius: 50%;
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(82, 196, 26, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(82, 196, 26, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(82, 196, 26, 0);
+  }
+}

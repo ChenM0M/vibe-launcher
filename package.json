@@ -1,0 +1,87 @@
+{
+  "name": "vibecoding-project-gallery",
+  "version": "1.0.0",
+  "description": "Visual VibeCoding project launcher and management system",
+  "main": "electron.js",
+  "homepage": "./",
+  "scripts": {
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "backend": "nodemon backend/server.js",
+    "frontend": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "start": "cross-env NODE_ENV=production node backend/server.js",
+    "start:prod": "npm run build && npm run start",
+    "install-all": "npm install && cd frontend && npm install",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run backend\" \"npm run frontend\" \"wait-on http://localhost:3000 && electron .\"",
+    "build-electron": "npm run build && electron-builder",
+    "dist": "npm run build && electron-builder --publish=never",
+    "pack": "electron-builder --dir",
+    "postinstall": "electron-builder install-app-deps",
+    "release": "node scripts/release.js",
+    "version-check": "node scripts/release.js --version"
+  },
+  "keywords": [
+    "vibecoding",
+    "project-manager",
+    "terminal"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1",
+    "sqlite3": "^5.1.6",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.1",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^38.2.0",
+    "electron-builder": "^26.0.12",
+    "electron-is-dev": "^3.0.1",
+    "nodemon": "^3.0.1",
+    "wait-on": "^9.0.1"
+  },
+  "build": {
+    "appId": "com.vibecoding.project-gallery",
+    "productName": "VibeCoding Project Gallery",
+    "directories": {
+      "output": "dist"
+    },
+    "npmRebuild": false,
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "win": {
+      "target": "portable"
+    },
+    "files": [
+      "electron.js",
+      "backend/**/*",
+      "frontend/build/**/*",
+      "node_modules/**/*",
+      "package.json",
+      "!node_modules/sqlite3/build/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "database.db",
+        "to": "database.db",
+        "filter": "**/*"
+      }
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
