@@ -30,17 +30,21 @@ jobs:
         run: |
           npm run postinstall:ci
 
+      - name: Setup MSBuild and Visual Studio
+        uses: microsoft/setup-msbuild@v2
+      
+      - name: Setup Python (for node-gyp)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install Windows SDK
+        run: |
+          choco install windows-sdk-10-version-2004-all -y
+
       - name: Build frontend
         run: |
           cd frontend && npm run build
-
-      - name: Setup MSBuild (Windows)
-        uses: microsoft/setup-msbuild@v1.3
-      
-      - name: Setup Python (for node-gyp)
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
 
       - name: Build Electron app (Windows only)
         run: |
