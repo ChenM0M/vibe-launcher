@@ -2,40 +2,44 @@
 
 **强大的项目管理和启动工具** - 一站式项目管理解决方案，支持多种开发工具和环境配置。
 
-![Version](https://img.shields.io/github/v/release/your-username/VibeCodingProjectGallery)
-![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)
+![Version](https://img.shields.io/github/v/release/ChenM0M/vibe-launcher)
+![Platform](https://img.shields.io/badge/platform-Windows-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Node.js](https://img.shields.io/badge/node.js-20%2B-brightgreen)
 
 ## ✨ 主要特性
 
 - 🎯 **项目管理**: 可视化管理所有项目，支持分组和标签
 - 🚀 **一键启动**: 配置开发工具和环境，一键启动项目
-- 🌐 **Web + 桌面**: 支持Web版本和跨平台桌面应用
+- 🌐 **Web + 桌面**: 支持Web版本和Windows桌面应用
 - 🎨 **现代界面**: 响应式设计，流畅动画，支持深色/浅色主题
 - 🔧 **灵活配置**: 支持多种CLI工具、环境变量和IDE配置
 - 📁 **智能扫描**: 自动识别和导入项目
 - 🌍 **国际化**: 支持中英文界面切换
+- 🤖 **自动发布**: GitHub Actions自动构建和发布Windows安装包
 
-## 🖼️ 截图预览
+## 🖼️ 功能亮点
 
-<!-- 你可以在这里添加应用截图 -->
+- 🎮 **现代化界面**: 基于Ant Design的企业级UI设计
+- ⚡ **流畅动画**: 使用Framer Motion打造的优雅交互体验
+- 🔄 **实时同步**: 项目状态实时更新，支持拖拽排序
+- 🛠️ **工具集成**: 支持Cursor、VS Code、Windsurf等主流开发工具
+- 📊 **智能管理**: 自动识别项目类型，智能分组管理
 
 ## 📥 下载安装
 
 ### 方式一：下载发布版本（推荐）
 
-访问 [Releases 页面](https://github.com/your-username/VibeCodingProjectGallery/releases) 下载对应平台的安装包：
+访问 [Releases 页面](https://github.com/ChenM0M/vibe-launcher/releases) 下载Windows安装包：
 
-- **Windows**: 下载 `.exe` 文件
-- **macOS**: 下载 `.dmg` 文件  
-- **Linux**: 下载 `.AppImage` 文件
+- **Windows**: 下载 `.exe` 文件（支持Windows 10及以上版本）
 
 ### 方式二：从源码构建
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/VibeCodingProjectGallery.git
-cd VibeCodingProjectGallery
+git clone https://github.com/ChenM0M/vibe-launcher.git
+cd vibe-launcher
 
 # 安装所有依赖
 npm run install-all
@@ -82,7 +86,7 @@ npm run dist
 ### 项目结构
 
 ```
-VibeCodingProjectGallery/
+vibe-launcher/
 ├── frontend/              # React 前端应用
 │   ├── src/
 │   │   ├── components/   # React 组件
@@ -133,7 +137,7 @@ VibeCodingProjectGallery/
 # 构建前端
 npm run build
 
-# 打包桌面应用（所有平台）
+# 打包Windows桌面应用
 npm run dist
 
 # 仅打包（不分发）
@@ -156,9 +160,9 @@ npm run pack
    ```
 
 2. **自动构建**: 推送标签后，GitHub Actions 会自动：
-   - 在多个平台构建应用
+   - 构建Windows桌面应用
    - 创建 GitHub Release
-   - 上传构建产物
+   - 上传Windows安装包
 
 ### 发布流程
 
@@ -203,7 +207,7 @@ npm run pack
 
 如果遇到问题或有功能建议：
 
-1. 查看 [Issues](https://github.com/your-username/VibeCodingProjectGallery/issues) 是否已有相关讨论
+1. 查看 [Issues](https://github.com/ChenM0M/vibe-launcher/issues) 是否已有相关讨论
 2. 创建新的 Issue，详细描述问题或建议
 3. 提供必要的环境信息和重现步骤
 
