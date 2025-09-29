@@ -133,12 +133,19 @@ function startBackend() {
   }
 
   // 生产环境中启动后端服务器
-  const backendPath = path.join(__dirname, 'backend/server.js');
+  // 在打包后，backend在app.asar.unpacked中
+  const backendPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'server.js')
+    : path.join(__dirname, 'backend', 'server.js');
+    
+  console.log('Starting backend from:', backendPath);
+  
   backendProcess = spawn('node', [backendPath], {
     env: {
       ...process.env,
       NODE_ENV: 'production',
-      PORT: '5000'
+      PORT: '5000',
+      DATABASE_PATH: path.join(app.getPath('userData'), 'database.db')
     }
   });
 

@@ -67,10 +67,20 @@
       "electron.js",
       "backend/**/*",
       "frontend/build/**/*",
-      "package.json"
+      "package.json",
+      "node_modules/express/**/*",
+      "node_modules/cors/**/*",
+      "node_modules/socket.io/**/*",
+      "node_modules/dotenv/**/*",
+      "node_modules/uuid/**/*",
+      "!node_modules/**/test/**",
+      "!node_modules/**/tests/**",
+      "!node_modules/**/*.md",
+      "!node_modules/**/.bin/**"
     ],
     "asarUnpack": [
-      "node_modules/sqlite3/**/*"
+      "node_modules/sqlite3/**/*",
+      "backend/**/*"
     ]
   }
 }
