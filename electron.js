@@ -135,6 +135,7 @@ function createMenu() {
 function startBackend() {
   if (isDev) {
     // 开发环境中，后端应该已经在运行
+    console.log('开发模式：跳过后端启动');
     return;
   }
 
@@ -143,28 +144,51 @@ function startBackend() {
   const backendPath = app.isPackaged
     ? path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'server.js')
     : path.join(__dirname, 'backend', 'server.js');
-    
-  console.log('Starting backend from:', backendPath);
+  
+  // 设置工作目录和NODE_PATH
+  const workingDir = app.isPackaged 
+    ? path.join(process.resourcesPath, 'app.asar.unpacked')
+    : __dirname;
+  
+  const nodePath = path.join(workingDir, 'node_modules');
+  
+  console.log('====== 后端启动信息 ======');
+  console.log('后端路径:', backendPath);
+  console.log('工作目录:', workingDir);
+  console.log('NODE_PATH:', nodePath);
+  console.log('数据库路径:', path.join(app.getPath('userData'), 'database.db'));
+  console.log('========================');
   
   backendProcess = spawn('node', [backendPath], {
+    cwd: workingDir,
     env: {
       ...process.env,
       NODE_ENV: 'production',
       PORT: '5000',
-      DATABASE_PATH: path.join(app.getPath('userData'), 'database.db')
-    }
+      DATABASE_PATH: path.join(app.getPath('userData'), 'database.db'),
+      NODE_PATH: nodePath
+    },
+    stdio: ['ignore', 'pipe', 'pipe'] // 捕获输出用于调试
   });
 
   backendProcess.stdout.on('data', (data) => {
-    console.log(`Backend: ${data}`);
+    console.log(`[Backend] ${data.toString().trim()}`);
   });
 
   backendProcess.stderr.on('data', (data) => {
-    console.error(`Backend error: ${data}`);
+    console.error(`[Backend Error] ${data.toString().trim()}`);
   });
 
   backendProcess.on('close', (code) => {
-    console.log(`Backend process exited with code ${code}`);
+    console.log(`[Backend] 进程退出，代码: ${code}`);
+    if (code !== 0) {
+      console.error('[Backend] 后端异常退出！');
+      // 可以显示错误提示给用户
+    }
+  });
+  
+  backendProcess.on('error', (err) => {
+    console.error('[Backend] 启动失败:', err);
   });
 }
 
