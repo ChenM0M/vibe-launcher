@@ -140,14 +140,14 @@ function startBackend() {
   }
 
   // 生产环境中启动后端服务器
-  // 在打包后，backend在app.asar.unpacked中
+  // asar: false，所以打包后文件在 resources/app 目录中
   const backendPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'server.js')
+    ? path.join(process.resourcesPath, 'app', 'backend', 'server.js')
     : path.join(__dirname, 'backend', 'server.js');
   
   // 设置工作目录和NODE_PATH
   const workingDir = app.isPackaged 
-    ? path.join(process.resourcesPath, 'app.asar.unpacked')
+    ? path.join(process.resourcesPath, 'app')
     : __dirname;
   
   const nodePath = path.join(workingDir, 'node_modules');
