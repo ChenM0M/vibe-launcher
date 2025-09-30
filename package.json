@@ -54,7 +54,7 @@
     "npmRebuild": false,
     "buildDependenciesFromSource": false,
     "nodeGypRebuild": false,
-    "asar": true,
+    "asar": false,
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
@@ -84,8 +84,7 @@
       "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
     ],
     "asarUnpack": [
-      "node_modules/sqlite3/**/*",
-      "backend/**/*"
+      "**/*"
     ]
   }
 }
