@@ -1,6 +1,6 @@
 {
   "name": "vibecoding-project-gallery",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Visual VibeCoding project launcher and management system",
   "main": "electron.js",
   "homepage": "./",
