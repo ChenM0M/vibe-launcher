@@ -38,28 +38,30 @@ jobs:
         run: |
           cd frontend && npm run build
 
-      - name: Build Electron app (using electron-packager)
+      - name: Build Electron app (using electron-builder)
         run: |
-          npx electron-packager . "VibeCoding Project Gallery" --platform=win32 --arch=x64 --out=dist --overwrite --asar=false
+          npx electron-builder@24.13.3 --win portable --publish=never
         env:
           NODE_ENV: production
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: Verify packaged application
         run: |
           echo "Packaged application is in dist/"
-          dir "dist\VibeCoding Project Gallery-win32-x64"
+          dir dist
 
-      - name: Compress to ZIP for distribution
+      - name: Rename portable executable
         run: |
-          Compress-Archive -Path "dist\VibeCoding Project Gallery-win32-x64\*" -DestinationPath "dist\VibeCoding-Project-Gallery-Portable-Windows-x64.zip"
-        shell: pwsh
+          move "dist\VibeCoding Project Gallery*.exe" "dist\VibeCoding-Project-Gallery-Portable-Windows-x64.exe"
+        shell: cmd
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
-            dist/*.zip
+            dist/*.exe
 
   release:
     needs: build
@@ -115,4 +117,4 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/*.zip
+            dist/*.exe

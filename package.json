@@ -15,7 +15,7 @@
     "electron": "electron .",
     "electron-dev": "concurrently \"npm run backend\" \"npm run frontend\" \"wait-on http://localhost:3000 && electron .\"",
     "build-electron": "npm run build && npx electron-builder",
-    "dist": "npm run build && electron-packager . \"VibeCoding Project Gallery\" --platform=win32 --arch=x64 --out=dist --overwrite --asar=false",
+    "dist": "npm run build && npx electron-builder --win portable --publish=never",
     "dist-builder": "npm run build && npx electron-builder --win --publish=never",
     "pack": "npx electron-builder --dir",
     "postinstall": "echo 'Skipping electron postinstall on local dev'",
