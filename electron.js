@@ -139,57 +139,130 @@ function startBackend() {
     return;
   }
 
+  const fs = require('fs');
+
   // 生产环境中启动后端服务器
-  // asar: false，所以打包后文件在 resources/app 目录中
-  const backendPath = app.isPackaged
-    ? path.join(process.resourcesPath, 'app', 'backend', 'server.js')
-    : path.join(__dirname, 'backend', 'server.js');
-  
-  // 设置工作目录和NODE_PATH
-  const workingDir = app.isPackaged 
-    ? path.join(process.resourcesPath, 'app')
-    : __dirname;
-  
+  // 处理 electron-builder 的多种打包结构
+  let backendPath;
+  let workingDir;
+
+  if (app.isPackaged) {
+    // 尝试多个可能的路径，按优先级排序
+    const possiblePaths = [
+      // 方案1: app.asar.unpacked 结构（最常见）
+      {
+        backend: path.join(process.resourcesPath, 'app.asar.unpacked', 'backend', 'server.js'),
+        workDir: path.join(process.resourcesPath, 'app.asar.unpacked')
+      },
+      // 方案2: app 目录结构（asar完全禁用时）
+      {
+        backend: path.join(process.resourcesPath, 'app', 'backend', 'server.js'),
+        workDir: path.join(process.resourcesPath, 'app')
+      },
+      // 方案3: 直接在 resources 下
+      {
+        backend: path.join(process.resourcesPath, 'backend', 'server.js'),
+        workDir: process.resourcesPath
+      }
+    ];
+
+    console.log('====== 路径诊断开始 ======');
+    console.log('process.resourcesPath:', process.resourcesPath);
+
+    // 尝试找到存在的路径
+    for (const pathConfig of possiblePaths) {
+      console.log('检查路径:', pathConfig.backend);
+      try {
+        if (fs.existsSync(pathConfig.backend)) {
+          backendPath = pathConfig.backend;
+          workingDir = pathConfig.workDir;
+          console.log('✓ 找到后端文件:', backendPath);
+          break;
+        } else {
+          console.log('✗ 路径不存在');
+        }
+      } catch (err) {
+        console.log('✗ 检查失败:', err.message);
+      }
+    }
+
+    if (!backendPath) {
+      console.error('❌ 错误：无法找到后端文件！');
+      console.error('已检查的所有路径：');
+      possiblePaths.forEach(p => console.error('  -', p.backend));
+
+      // 列出实际存在的目录结构
+      try {
+        console.log('\n实际 resources 目录内容：');
+        const resourcesContent = fs.readdirSync(process.resourcesPath);
+        resourcesContent.forEach(item => {
+          const itemPath = path.join(process.resourcesPath, item);
+          const isDir = fs.statSync(itemPath).isDirectory();
+          console.log(`  ${isDir ? '📁' : '📄'} ${item}`);
+        });
+      } catch (err) {
+        console.error('无法读取 resources 目录:', err.message);
+      }
+
+      return;
+    }
+  } else {
+    // 开发模式路径
+    backendPath = path.join(__dirname, 'backend', 'server.js');
+    workingDir = __dirname;
+  }
+
   const nodePath = path.join(workingDir, 'node_modules');
-  
-  console.log('====== 后端启动信息 ======');
+  const dbPath = path.join(app.getPath('userData'), 'database.db');
+
+  console.log('\n====== 后端启动配置 ======');
   console.log('后端路径:', backendPath);
   console.log('工作目录:', workingDir);
   console.log('NODE_PATH:', nodePath);
-  console.log('数据库路径:', path.join(app.getPath('userData'), 'database.db'));
-  console.log('========================');
-  
+  console.log('数据库路径:', dbPath);
+  console.log('node_modules 存在:', fs.existsSync(nodePath));
+  console.log('========================\n');
+
   backendProcess = spawn('node', [backendPath], {
     cwd: workingDir,
     env: {
       ...process.env,
       NODE_ENV: 'production',
       PORT: '5000',
-      DATABASE_PATH: path.join(app.getPath('userData'), 'database.db'),
+      DATABASE_PATH: dbPath,
       NODE_PATH: nodePath
     },
     stdio: ['ignore', 'pipe', 'pipe'] // 捕获输出用于调试
   });
 
   backendProcess.stdout.on('data', (data) => {
-    console.log(`[Backend] ${data.toString().trim()}`);
+    const output = data.toString().trim();
+    console.log(`[Backend] ${output}`);
   });
 
   backendProcess.stderr.on('data', (data) => {
-    console.error(`[Backend Error] ${data.toString().trim()}`);
+    const output = data.toString().trim();
+    console.error(`[Backend Error] ${output}`);
   });
 
   backendProcess.on('close', (code) => {
-    console.log(`[Backend] 进程退出，代码: ${code}`);
+    console.log(`[Backend] 进程退出，退出码: ${code}`);
     if (code !== 0) {
-      console.error('[Backend] 后端异常退出！');
-      // 可以显示错误提示给用户
+      console.error('[Backend] ❌ 后端异常退出！');
     }
   });
-  
+
   backendProcess.on('error', (err) => {
-    console.error('[Backend] 启动失败:', err);
+    console.error('[Backend] ❌ 启动失败:', err.message);
+    console.error('完整错误:', err);
   });
+
+  // 添加启动成功检测
+  setTimeout(() => {
+    if (backendProcess && !backendProcess.killed) {
+      console.log('[Backend] ✓ 后端进程运行中 (PID:', backendProcess.pid, ')');
+    }
+  }, 2000);
 }
 
 // 这个方法将在 Electron 初始化完成并准备创建浏览器窗口时调用

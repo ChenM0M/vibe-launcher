@@ -38,21 +38,28 @@ jobs:
         run: |
           cd frontend && npm run build
 
-      - name: Build Electron app (Portable Windows EXE)
+      - name: Build Electron app (using electron-packager)
         run: |
-          npx electron-builder@24.13.3 --win portable --publish=never
+          npx electron-packager . "VibeCoding Project Gallery" --platform=win32 --arch=x64 --out=dist --overwrite --asar=false
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
+          NODE_ENV: production
+
+      - name: Create portable installer package
+        run: |
+          echo "Packaged application is in dist/"
+          dir "dist\VibeCoding Project Gallery-win32-x64"
+
+      - name: Compress to ZIP for distribution
+        run: |
+          Compress-Archive -Path "dist\VibeCoding Project Gallery-win32-x64\*" -DestinationPath "dist\VibeCoding-Project-Gallery-Portable-Windows-x64.zip"
+        shell: pwsh
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
-            dist/*.exe
-            dist/*.exe.blockmap
-            dist/latest.yml
+            dist/*.zip
 
   release:
     needs: build
@@ -92,7 +99,8 @@ jobs:
             - Windows桌面应用，流畅稳定
 
             ### 📦 下载说明
-            - **Windows 10/11**: 下载 `.exe` 安装包，双击安装即可
+            - **Windows 10/11**: 下载 `.zip` 压缩包，解压后运行 `VibeCoding Project Gallery.exe`
+            - **绿色便携版**：无需安装，解压即用
 
             ### 🔧 系统要求
             - Windows 10 或更高版本（推荐Windows 11）
@@ -102,9 +110,9 @@ jobs:
             详细更新内容请查看 [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
 
             ---
-            
+
             如有问题或建议，请在 [Issues](https://github.com/${{ github.repository }}/issues) 中反馈。
           draft: false
           prerelease: false
           files: |
-            dist/*.exe
+            dist/*.zip

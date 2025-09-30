@@ -24,7 +24,14 @@
       "Bash(curl -X DELETE http://localhost:5000/api/projects/765a331c-ecef-4889-a1ba-aac7e2778bb0)",
       "Bash(set PORT=3000)",
       "Bash(curl -X POST http://localhost:5000/api/projects -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test Delete Project\"\",\"\"description\"\":\"\"用于测试删除功能的项目\"\",\"\"path\"\":\"\"C:\\\\test\\\\delete\"\"}\")",
-      "Bash(curl -X POST http://localhost:5000/api/projects -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test Delete Project\"\",\"\"description\"\":\"\"Test project for delete functionality\"\",\"\"path\"\":\"\"C:/test/delete\"\"}\")"
+      "Bash(curl -X POST http://localhost:5000/api/projects -H \"Content-Type: application/json\" -d \"{\"\"name\"\":\"\"Test Delete Project\"\",\"\"description\"\":\"\"Test project for delete functionality\"\",\"\"path\"\":\"\"C:/test/delete\"\"}\")",
+      "Bash(npx electron-builder:*)",
+      "Bash(set CSC_IDENTITY_AUTO_DISCOVERY=false)",
+      "Bash(npm run pack:*)",
+      "Bash(set ELECTRON_BUILDER_ALLOW_UNRESOLVED_DEPENDENCIES=true)",
+      "Bash(set WIN_CSC_LINK=)",
+      "Bash(npx:*)",
+      "Bash(start:*)"
     ],
     "deny": [],
     "ask": []
