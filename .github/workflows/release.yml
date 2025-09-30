@@ -40,7 +40,7 @@ jobs:
 
       - name: Build Electron app (using electron-builder)
         run: |
-          npx electron-builder --win portable --publish=never
+          npx electron-builder@24.13.3 --win portable --publish=never
         env:
           NODE_ENV: production
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

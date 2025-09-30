@@ -63,12 +63,8 @@
       "createStartMenuShortcut": true
     },
     "win": {
-      "target": "portable",
-      "sign": null,
-      "signingHashAlgorithms": [],
-      "verifyUpdateCodeSignature": false
+      "target": "portable"
     },
-    "forceCodeSigning": false,
     "files": [
       "electron.js",
       "backend/**/*",
