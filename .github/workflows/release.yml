@@ -38,30 +38,28 @@ jobs:
         run: |
           cd frontend && npm run build
 
-      - name: Build Electron app (using electron-builder)
+      - name: Build Electron app (using electron-packager)
         run: |
-          npx electron-builder@24.13.3 --win portable --publish=never
+          npx electron-packager . "VibeCoding Project Gallery" --platform=win32 --arch=x64 --out=dist --overwrite --asar=false
         env:
           NODE_ENV: production
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
 
       - name: Verify packaged application
         run: |
           echo "Packaged application is in dist/"
-          dir dist
+          dir "dist\VibeCoding Project Gallery-win32-x64"
 
-      - name: Rename portable executable
+      - name: Compress to ZIP for distribution
         run: |
-          move "dist\VibeCoding Project Gallery*.exe" "dist\VibeCoding-Project-Gallery-Portable-Windows-x64.exe"
-        shell: cmd
+          Compress-Archive -Path "dist\VibeCoding Project Gallery-win32-x64\*" -DestinationPath "dist\VibeCoding-Project-Gallery-Portable-Windows-x64.zip"
+        shell: pwsh
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
-            dist/*.exe
+            dist/*.zip
 
   release:
     needs: build
@@ -101,8 +99,8 @@ jobs:
             - Windows桌面应用，流畅稳定
 
             ### 📦 下载说明
-            - **Windows 10/11**: 下载 `.exe` 便携版，直接运行无需安装
-            - **绿色便携版**：单文件可执行程序，随时随地使用
+            - **Windows 10/11**: 下载 `.zip` 压缩包，解压后运行 `VibeCoding Project Gallery.exe`
+            - **绿色便携版**：无需安装，解压即用
 
             ### 🔧 系统要求
             - Windows 10 或更高版本（推荐Windows 11）
@@ -117,4 +115,4 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/*.exe
+            dist/*.zip

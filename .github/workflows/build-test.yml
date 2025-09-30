@@ -39,9 +39,8 @@ jobs:
         run: |
           cd frontend && npm run build
 
-      - name: Test Electron packaging (using electron-builder)
+      - name: Test Electron packaging (using electron-packager)
         run: |
-          npx electron-builder@24.13.3 --win portable --dir
+          npx electron-packager . "VibeCoding Project Gallery" --platform=win32 --arch=x64 --out=dist --overwrite --asar=false
         env:
           NODE_ENV: production
-          CSC_IDENTITY_AUTO_DISCOVERY: false
